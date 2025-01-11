@@ -1,3 +1,4 @@
+Example
 ```
 package main
 
