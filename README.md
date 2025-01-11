@@ -24,7 +24,7 @@ func main() {
 	fmt.Println(EnumTestStr.ZERO, EnumTestStr.ONE, EnumTestStr.TWO)
 }
 
-// 运行结果
+// 
 // 0 1 2
 // ZERO ONE TWO
 
