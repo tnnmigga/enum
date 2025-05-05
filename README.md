@@ -21,7 +21,7 @@ go get github.com/tnnmigga/enum@latest
 ### String Enums
 
 ```go
-HttpStatus := New[struct {
+var HttpStatus = New[struct {
 	StatusOK                  string
 	StatusNotFound            string
 	StatusInternalServerError string
@@ -33,7 +33,7 @@ fmt.Println(HttpStatus.StatusOK) // Output: "StatusOK"
 ### Integer Enums
 
 ```go
-HttpStatus := New[struct {
+var HttpStatus = New[struct {
 	StatusOK                  int `enum:"200"`
 	StatusNotFound            int `enum:"404"`
 	StatusInternalServerError int `enum:"500"`
@@ -45,7 +45,7 @@ fmt.Println(HttpStatus.StatusOK) // Output: 200
 ### Nested Enums
 
 ```go
-HttpStatus := New[struct {
+var HttpStatus = New[struct {
 	Code struct {
 		StatusOK                  int `enum:"200"`
 		StatusNotFound            int `enum:"404"`

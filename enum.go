@@ -15,7 +15,7 @@ import (
 // or integer overflows.
 //
 // Example usage:
-//  HttpStatus := enum.New[struct {
+//  var HttpStatus = enum.New[struct {
 //      Code struct {
 //          StatusOK                  int `enum:"200"`
 //          StatusNotFound            int `enum:"404"`
