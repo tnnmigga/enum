@@ -177,3 +177,72 @@ func checkUintOverflow(value uint64, kind reflect.Kind) error {
 	}
 	return nil
 }
+
+// Contains checks if the enum has a top-level field with the same type and value as the provided value.
+// It does not recursively check nested structs. Returns true if a matching field is found, false otherwise.
+func Contains[T enumerable](enum any, value T) bool {
+	enumVal := reflect.ValueOf(enum)
+	if enumVal.Kind() != reflect.Struct {
+		return false
+	}
+
+	valueType := reflect.TypeOf(value)
+	for i := 0; i < enumVal.NumField(); i++ {
+		fieldVal := enumVal.Field(i)
+		if !fieldVal.CanInterface() {
+			continue
+		}
+
+		fieldType := enumVal.Type().Field(i).Type
+		if fieldType == valueType && reflect.DeepEqual(fieldVal.Interface(), value) {
+			return true
+		}
+	}
+	return false
+}
+
+// Keys returns a slice of the names of all top-level fields in the enum.
+// It does not include fields from nested structs or unexported fields.
+func Keys(enum any) []string {
+	enumVal := reflect.ValueOf(enum)
+	if enumVal.Kind() != reflect.Struct {
+		return nil
+	}
+
+	var keys []string
+	for i := 0; i < enumVal.NumField(); i++ {
+		if enumVal.Field(i).CanInterface() {
+			keys = append(keys, enumVal.Type().Field(i).Name)
+		}
+	}
+	return keys
+}
+
+// Values returns a slice of the values of all top-level fields in the enum that match the type T.
+// T must be an integer or string type. It does not include values from nested structs or unexported fields.
+func Values[T enumerable](enum any) []T {
+	enumVal := reflect.ValueOf(enum)
+	if enumVal.Kind() != reflect.Struct {
+		return nil
+	}
+
+	var values []T
+	targetType := reflect.TypeOf((*T)(nil)).Elem()
+	for i := 0; i < enumVal.NumField(); i++ {
+		fieldVal := enumVal.Field(i)
+		if !fieldVal.CanInterface() {
+			continue
+		}
+
+		if fieldVal.Type() == targetType {
+			values = append(values, fieldVal.Interface().(T))
+		}
+	}
+	return values
+}
+
+type enumerable interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+		~string
+}

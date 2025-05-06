@@ -1,6 +1,7 @@
 package enum
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -51,5 +52,59 @@ func TestNestedEnum(t *testing.T) {
 	}
 	if HttpStatus.Type.StatusOK != "StatusOK" || HttpStatus.Type.StatusNotFound != "StatusNotFound" || HttpStatus.Type.StatusInternalServerError != "StatusInternalServerError" {
 		t.Errorf("got %+v, want {Type: {StatusOK: StatusOK, StatusNotFound: StatusNotFound, StatusInternalServerError: StatusInternalServerError}}", HttpStatus.Type)
+	}
+}
+
+// TestContains tests the Contains function with the HttpStatus enum.
+func TestContains(t *testing.T) {
+	HttpStatus := New[struct {
+		StatusOK                  string
+		StatusNotFound            string
+		StatusInternalServerError string
+	}]()
+
+	if !Contains(HttpStatus, "StatusOK") {
+		t.Errorf("Contains(%v, %q) = false; want true", HttpStatus, "StatusOK")
+	}
+	if Contains(HttpStatus, "Unknown") {
+		t.Errorf("Contains(%v, %q) = true; want false", HttpStatus, "Unknown")
+	}
+}
+
+// TestKeys tests the Keys function with the HttpStatus enum.
+func TestKeys(t *testing.T) {
+	HttpStatus := New[struct {
+		StatusOK                  string
+		StatusNotFound            string
+		StatusInternalServerError string
+	}]()
+
+	got := Keys(HttpStatus)
+	want := []string{"StatusOK", "StatusNotFound", "StatusInternalServerError"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Keys(%v) = %v; want %v", HttpStatus, got, want)
+	}
+
+	if got := Keys(123); got != nil {
+		t.Errorf("Keys(123) = %v; want nil", got)
+	}
+}
+
+// TestValues tests the Values function with the HttpStatus enum.
+func TestValues(t *testing.T) {
+	HttpStatus := New[struct {
+		StatusOK                  string
+		StatusNotFound            string
+		StatusInternalServerError string
+	}]()
+
+	got := Values[string](HttpStatus)
+	want := []string{"StatusOK", "StatusNotFound", "StatusInternalServerError"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Values[string](%v) = %v; want %v", HttpStatus, got, want)
+	}
+
+	if got := Values[int](HttpStatus); len(got) > 0 {
+		t.Errorf("Values[int](%v) = %v; want []", HttpStatus, got)
 	}
 }
